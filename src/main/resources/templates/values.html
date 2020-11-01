@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="UGAL Map web application designed for 'Dunarea de Jos' of Galati"/>
+    <meta name="author" content="Crystal-System" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <title>UGAL Map</title>
+  </head>
+  <body>
+
+
+ <div th:insert="header"></div>
+ <div th:insert="sidebarEditor"></div>
+  <div class="card shadow mb-4" style="margin-left: 18%">
+  
+    <div class="card-header py-3 card-header-bg">
+    
+       <h6 class="m-0 font-weight-bold table-title" style="text-align: center">
+        VALUES
+      </h6> 
+    </div>
+    <p style="color: red" th:if="${message}" th:text="${message}"></p>
+    <div class="card-body" >
+    
+      <div class="row">
+        <div class="col-6">
+			 <p style="text-align:center"><b >All Values</b></p> 
+            <table class="table table-striped table-responsive-md">
+                <thead>
+                    <tr>
+                       <th style="display: none">Value ID</th>
+                        <th>Value Content</th>
+                        <th>Value Type</th>
+                        <th>Edit</th>
+                        
+                    </tr>
+                </thead>
+                
+                
+                <!-- VALUES LIST -->
+                <tbody>
+                    <tr th:each="val : ${values}">
+                        <td style="display: none" th:text="${val.valueId}" ></td>
+                        <td th:text="${val.valueContent}"></td>
+                        <td th:text="${val.valueType}"></td>
+                        
+                        <td><button class="edit btn btn-warning ">Edit</button></td>
+                        
+                    </tr>
+                    </tbody>
+                    </table>
+                    
+             
+          <button class="btn btn-primary btn-icon-split margin-top" onclick="showHideNewUserForm()">
+            <span class="icon text-white-50">
+              <i class="fas fa-plus"></i>
+            </span>
+            <span class="text">Insert Value</span>
+          </button>
+        </div>
+        <!-- Update Value Form -->
+        <div class="col-6">
+         <p style="text-align:center"><b >Update Value</b></p> 
+            <form action="/value/updateValue" method="POST">
+                <input type="hidden" name="valueId"  id="valueId" value="">
+                <label class="margin-top" for="valueContent" >Value Content</label>
+                <input class="form-control" type="text" name="valueContent" id="valueContent" placeholder="Content" value="" required/>
+                <label class="margin-top" for="valueType">Value Type</label>
+                <input class="form-control" type="text" name="valueType" id="valueType" placeholder="Type" value="" required/>
+                <button class="update btn btn-success btn-icon-split margin-top" style="width:100px;margin-bottom: 12px;margin-top: 12px;" type="submit">
+                             <span class="icon text-white-50">
+				              <i class="fas fa-check"></i>
+				           </span>
+                    <span class="text">Update</span>
+                </button>
+              </form>
+
+			<!-- Delete Value form -->
+              <form action="/value/deleteValue" method="GET">
+                <input type="hidden" name="valueId2"  id="valueId2" value="">
+                  <button class="delete btn btn-danger btn-icon-split margin-top" style="width:100px" type="submit">
+                          <span class="icon text-white-50">
+				              <i class="fas fa-times"></i>
+				           </span>
+                      <span class="text">Delete</span>
+                  </button>
+              </form>
+        </div>
+      </div>
+
+      <!-- Add new Value form -->
+      <div class="row" id="addNewForm" style="display: none;">
+        <div class="col-6">
+             <form action="/value/saveValue" method="POST">
+                <input type="hidden" name="valueId" value="0">
+                <label class="margin-top" for="valueContent" >Value Content</label>
+                <input class="form-control" type="text" name="valueContent" id="vContent" placeholder="Content" value="" required/>
+                <label class="margin-top" for="valueType">Value Type</label>
+                <input class="form-control" type="text" name="valueType" id="vType" placeholder="Type" value="" required/>
+                 <button class="btn btn-success btn-icon-split margin-top"
+                         type="submit">
+                     <span class="text">Save</span>
+                 </button>
+              </form>
+        </div>
+      </div>
+    
+    </div>
+  </div>
+       <script>
+                        $(document).on("click",".edit", function(){
+                              var row = $(this);
+
+                              var id = row.closest("tr").find("td:eq(0)").text();
+                              $('#valueId').val(id);
+                              var id = row.closest("tr").find("td:eq(0)").text();
+                              $('#valueId2').val(id);
+                              var content = row.closest("tr").find("td:eq(1)").text();
+                              $('#valueContent').val(content);
+                              var type = row.closest("tr").find("td:eq(2)").text();
+                              $('#valueType').val(type);
+                          });
+
+
+                        function showHideNewUserForm() {
+                            let x = document.getElementById("addNewForm");
+                            if (x.style.display === "none") {
+                                x.style.display = "block";
+                            } else {
+                                x.style.display = "none";
+                            }
+                        }
+
+                        $(".update").click(function () {
+                            var update = document.getElementById("valueId").value;
+                            if (update == "") {
+                            	$("#myModalUpdate").modal();
+                                return false;
+                            }
+                        });
+
+                        $(".delete").click(function () {
+                            var deleteVal = document.getElementById("valueId2").value;
+                            if (deleteVal == "") {
+                            	$("#myModalDelete").modal();
+                                return false;
+                            }
+                        });
+                                        
+                        </script>
+                         <div th:insert="popup"></div>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="UGAL Map web application designed for 'Dunarea de Jos' of Galati"/>
+    <meta name="author" content="Crystal-System" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <title>UGAL Map</title>
+  </head>
+	<body>
+		<div th:insert="header"></div>
+ 		<div th:insert="sidebarEditor"></div>
+          <!-- see all Language -->
+			<div th:fragment="Label">
+			  <!-- Page Heading -->
+			  <!-- DataTales Example -->
+			  <div class="card shadow mb-4" style="margin-left: 18%">
+			    <div class="card-header py-3 card-header-bg">
+			      <h6 class="m-0 font-weight-bold table-title">
+			        Language
+			      </h6>
+			    </div>
+			    <p style="color: red" th:if="${message}" th:text="${message}"></p>
+			    <div class="card-body">
+			      <div class="row">
+					  <!-- List of Language -->
+			        <div class="col-6">
+					    <table id="languageTable" class="table">
+							<thead>
+							  <tr>
+								  <th style="display: none">Language Id </th>
+								  <th> Language</th>
+								  <th>Edit</th>
+							  </tr>
+							</thead>
+							<tbody>
+							   <tr th:each="language : ${languages}">
+									<td th:text="${language.languageId}" style="display: none"></td>
+									<td th:text="${language.languageName}"></td>
+									<td><button  class="edit btn btn-warning btn-icon-split margin-top">Edit</button></td>
+								</tr>
+							</tbody>
+						  </table>
+                      <br>
+                      <button class="btn btn-primary btn-icon-split margin-top" onclick="showHideNewLanguageForm()">
+                            <span class="icon text-white-50">
+                              <i class="fas fa-plus"></i>
+                            </span>
+                            <span class="text">Insert Language</span>
+                      </button>
+                
+					  <script>
+						  //Get Language Name
+						  $(document).on("click",".edit", function(){
+							  var row = $(this);
+
+							  var id = row.closest("tr").find("td:eq(0)").text();
+							  $('#languageId1').val(id);
+							  $('#languageId2').val(id);
+							  var labelName = row.closest("tr").find("td:eq(1)").text();
+							  $('#langName').val(labelName);
+						  });
+						  
+						  $(document).on("click",".update",function () {
+							  var update = document.getElementById("languageId1").value;
+							  if (update == "") {
+								  $("#myModalUpdate").modal();
+								  return false;
+							  }
+						  });
+						  $(document).on("click",".delete",function () {
+							  var deleteEntity = document.getElementById("languageId2").value;
+							  if (deleteEntity == "") {
+								  $("#myModalDelete").modal();
+								  return false;
+							  }
+						  });
+                          
+						  //Animation newForm
+                          function showHideNewLanguageForm() {
+                            let x = document.getElementById("addNewForm");
+                            if (x.style.display === "none") {
+                                x.style.display = "block";
+                            } else {
+                                x.style.display = "none";
+                            }
+                        }
+					  </script>
+					  <br>
+					  <!-- Add Language -->
+					  <div id="addNewForm" class="col-6" style="display:none">
+							<form action="/language/saveLanguage" method="POST">
+							<br>
+							  <input type="hidden" name="languageId" id="languageId" value="">
+							  <label class="margin-top" for="languageName">Language Name</label>
+							  <input class="form-control" type="text" name="languageName" id="languageName" required placeholder="language" value="" />
+							  <br>
+							  <button type="submit" class="btn btn-primary btn-icon-split margin-top">
+								<span class="icon text-white-50">
+								  <i class="fas fa-check"></i>
+								</span>
+								<span class="text">Save</span>
+							  </button>
+							</form>
+					  </div>
+				   </div>
+				   <!-- Update Language-->
+			        <div class="col-6">
+			          <form action="/language/updateLanguage" method="POST">
+			            <input type="hidden" name="languageId1" id="languageId1" value="">
+			            <label class="margin-top" for="languageName">Language Name</label>
+						<input class="form-control" type="text" name="langName" id="langName" required placeholder="language" value="" />
+						  <button class="update btn btn-success btn-icon-split margin-top" style="width:100px;margin-bottom: 12px;margin-top: 12px;" type="submit">
+                             <span class="icon text-white-50">
+				              <i class="fas fa-check"></i>
+				           </span>
+							  <span class="text">Update</span>
+						  </button>
+					  </form>
+					  <!-- Delete Language -->
+					  <form action="/language/deleteLanguage" method="GET">
+						<input type="hidden" name="languageId2" id="languageId2" value="">
+						  <button class="delete btn btn-danger btn-icon-split margin-top" style="width:100px" type="submit">
+                          <span class="icon text-white-50">
+				              <i class="fas fa-times"></i>
+				           </span>
+							  <span class="text">Delete</span>
+						  </button>
+					</form>
+			        </div>
+			      </div>
+			      <div th:insert="popup" ></div>
+		</body>
+		</html>

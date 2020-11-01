@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="UGAL Map web application designed for 'Dunarea de Jos' of Galati"/>
+    <meta name="author" content="Crystal-System" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <title>UGAL Map</title>
+  </head>
+  <body>
+
+ <div th:insert="header"></div>
+ <div th:insert="sidebarEditor"></div>
+ 
+  <div class="card shadow mb-4" style="margin-left: 18%">
+
+    <div class="card-header py-3 card-header-bg">
+      <h6 class="m-0 font-weight-bold table-title" style="text-align: center">
+        Entity
+      </h6>
+    </div>
+      <h3 style="color: red" th:if="${msg}" th:text="${msg}"></h3>
+      <div class="card-body">
+          <div class="row">
+              <div class="col-6">
+
+                  <table class="table table-striped table-responsive-md">
+                      <thead>
+                      <tr>
+                          <th style="display:none;">Entity id</th>
+                          <th>Entity Type</th>
+                          <th>Edit</th>
+                      </tr>
+                      </thead>
+
+
+                      <!-- VALUES LIST -->
+                      <tbody>
+                      <tr th:each="entity : ${entity}">
+                          <td style="display: none" th:text="${entity.entityId}"></td>
+                          <td th:text="${entity.entityType}"></td>
+                          <td>
+                              <button class="edit btn btn-warning ">Edit</button>
+                          </td>
+                      </tr>
+                      <tr th:each="message : ${message}">
+                          <td th:text="${message}"></td>
+                      </tbody>
+                  </table>
+
+                  <button class="btn btn-primary btn-icon-split margin-top"
+                          onclick="showHideNewUserForm()">
+						<span class="icon text-white-50"> <i class="fas fa-plus"></i>
+						</span> <span class="text">Insert Value</span>
+                  </button>
+              </div>
+              <!-- Update Value Form -->
+              <div class="col-3">
+                  <form action="/entity/update" method="POST">
+                      <input id="entityId" name="entityId" type="hidden" value="">
+                      <label class="margin-top" for="entityType2">Entity Type</label> <input
+                          class="form-control" id="entityType2" name="entityType2"
+                          placeholder="Type" type="text" value="" required />
+                      <button class="update btn btn-success btn-icon-split margin-top" style="width:100px;margin-bottom: 12px;margin-top: 12px;" type="submit">
+                             <span class="icon text-white-50">
+				              <i class="fas fa-check"></i>
+				           </span>
+                          <span class="text">Update</span>
+                      </button>
+
+                  </form>
+
+                  <!-- Delete Value form -->
+                  <form action="/entity/delete" method="GET">
+                      <input id="entityId2" name="entityId2" type="hidden" value="">
+                      <button class="delete btn btn-danger btn-icon-split margin-top" style="width:100px" type="submit">
+                          <span class="icon text-white-50">
+				              <i class="fas fa-times"></i>
+				           </span>
+                          <span class="text">Delete</span>
+                      </button>
+                  </form>
+              </div>
+          </div>
+          <!-- Add new Value form -->
+          <div class="row" id="addNewForm" style="display: none;">
+              <div class="col-6">
+                  <form action="/entity/add" method="POST">
+                      <label class="margin-top" for="entityType">Entity Type</label> <input
+                          class="form-control" id="entityType" name="entityType"
+                          required placeholder="Entity" type="text" value=""/>
+                      <button class="btn btn-success btn-icon-split margin-top"
+                              type="submit">
+                          <span class="text">Save</span>
+                      </button>
+                  </form>
+              </div>
+          </div>
+
+      </div>
+  </div>
+ </div>
+
+ <!--  -->
+
+
+ </div>
+ </div>
+ </div>
+
+ </div>
+
+ <script>
+     $(document).on(
+         "click",
+         ".edit",
+         function () {
+             var row = $(this);
+             var id = row.closest("tr").find("td:eq(0)").text();
+             $('#entityId').val(id);
+             $('#entityId2').val(id);
+             var type = row.closest("tr").find("td:eq(1)").text();
+             $('#entityType2').val(type);
+         });
+
+
+     $(".update").click(function () {
+         var update = document.getElementById("entityId").value;
+         if (update == "") {
+        	 $("#myModalUpdate").modal();
+             return false;
+         }
+     });
+
+     $(".delete").click(function () {
+         var deleteEntity = document.getElementById("entityId2").value;
+         if (deleteEntity == "") {
+        	 $("#myModalDelete").modal();
+             return false;
+         }
+     });
+
+     function showHideNewUserForm() {
+         let x = document.getElementById("addNewForm");
+
+         if (x.style.display === "none") {
+             x.style.display = "block";
+         } else {
+             x.style.display = "none";
+         }
+     }
+
+
+ </script>
+	<div th:insert="popup"></div>
+  </body>
+</html>

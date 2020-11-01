@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="UGAL Map web application designed for 'Dunarea de Jos' of Galati"/>
+    <meta name="author" content="Crystal-System" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <title>UGAL Map</title>
+  </head>
+	<body>
+		<div th:insert="header"></div>
+ 		<div th:insert="sidebarEditor"></div>
+          <!-- see all Locations -->
+			<div th:fragment="buildingCoordinates">
+			  <!-- Page Heading -->
+			  <!-- DataTales Example -->
+			  <div class="card shadow mb-4" style="margin-left: 18%">
+			    <div class="card-header py-3 card-header-bg">
+			     <h5 class="m-0 font-weight-bold table-title">
+			       Locations
+			     </h5>
+			   </div>
+			   <p style="color: red" th:if="${message}" th:text="${message}"></p>
+			   <div class="card-body">
+			     <div class="row">
+			       <div class="">
+			       
+			         <!-- Begin Table Location List -->
+					 <div class="col-md-5">
+					    <table id="coordinatesTable" class="table">
+					      <thead>
+					        <tr>
+								<th style="display: none"> BuildingCoordinate Id </th>
+								<th> Building identification </th>
+								<th> Coordinate Latituted </th>
+								<th> Coordinate Longitute </th>
+								<th> Position </th>
+								<th>Edit</th>
+
+					        </tr>
+					      </thead>
+					      <tbody>
+					         <tr th:each="buildingCoordinates : ${buildingCoordinates}">
+					              <td th:text="${buildingCoordinates.buildingCoordinatesId}" style="display: none"></td>
+								  <td th:text="${buildingCoordinates.building.buildingId}"></td>
+								  <td th:text="${buildingCoordinates.coordinates.coordinatesId}" style="display: none"></td>
+								  <td th:text="${buildingCoordinates.coordinates.coordinatesLatitude}"></td>
+								  <td th:text="${buildingCoordinates.coordinates.coordinatesLongitute}"></td>
+								  <td th:text="${buildingCoordinates.position}"></td>
+								  <td><button  class="edit btn btn-warning btn-icon-split margin-top">Edit</button></td>
+					          </tr>
+					      </tbody>
+					    </table>
+					  </div>
+					  <!-- End Location List -->
+					  
+					  <br>
+                      <button class="btn btn-primary btn-icon-split margin-top" onclick="showHideNewDictionaryForm()">
+                            <span class="icon text-white-50">
+                              <i class="fas fa-plus"></i>
+                            </span>
+                            <span class="text">Insert Location</span>
+                      </button>
+					  
+					  <script>
+						  //Get Location
+						  $(document).on("click",".edit", function(){
+							  var row = $(this);
+
+							  var id = row.closest("tr").find("td:eq(0)").text();
+							  $('#buildingCoordinatesId').val(id);
+							  $('#buildingCoordinatesId2').val(id);
+							  var buildingNumber = row.closest("tr").find("td:eq(1)").text();
+							  $('#buildingId').val(buildingNumber);
+							  var coordinateId = row.closest("tr").find("td:eq(2)").text();
+							  $('#coordinatesId').val(coordinateId);
+							  $('#coordinatesId0').val(coordinateId);
+							  var position = row.closest("tr").find("td:eq(5)").text();
+							  $('#buildingPosition').val(position);
+						  });
+						  
+						  $(document).on("click",".update",function () {
+							  var update = document.getElementById("buildingCoordinatesId").value;
+							  if (update == "") {
+								  $("#myModalUpdate").modal();
+								  return false;
+							  }
+						  });
+						  $(document).on("click",".delete",function () {
+							  var deleteEntity = document.getElementById("buildingCoordinatesId2").value;
+							  if (deleteEntity == "") {
+								  $("#myModalDelete").modal();
+								  return false;
+							  }
+						  });
+						  
+						  //Animation newForm
+                          function showHideNewDictionaryForm() {
+                            let x = document.getElementById("addNewForm");
+                            if (x.style.display === "none") {
+                                x.style.display = "block";
+                            } else {
+                                x.style.display = "none";
+                            }
+                        }
+					  </script>
+					  <!-- Save Location -->
+					   <div id="addNewForm" class="col-4" style="display:none">
+							<form action="/location/saveLocation" method="POST">
+							<br>
+							<label class="margin-top" for="dictionaryTranslatedValue">Building identification</label>
+							<select class="form-control margin-top-select" name="buildingId1" id="buildingId1" required >
+							      <option disabled selected value="" >Select Building</option>
+								  <option th:each="building : ${buildings}" th:value="${building.buildingId}"
+								  th:text="${building.buildingId}"></option>
+							 </select>
+							 
+							 <label class="margin-top" for="dictionaryTranslatedValue">Coordinates</label>
+							 <select class="form-control margin-top-select" name="coordinatesId1" id="coordinatesId1" required >
+							 	   <option disabled selected value="" >Select Coordinates</option>
+								   <option th:each="coordinate : ${coordinates}" th:value="${coordinate.coordinatesId}"
+								   th:text="|${coordinate.coordinatesLatitude}--${coordinate.coordinatesLongitute}|"></option>
+							  </select>
+
+							   <label class="margin-top" for="dictionaryTranslatedValue">Building Position</label>
+							   <input class="form-control" type="text" name="buildingPosition1" id="buildingPosition1" 
+							    required placeholder="Building Position" value="" />
+
+							  <br>
+							  <button type="submit" class="btn btn-primary btn-icon-split margin-top">
+							  <span class="icon text-white-50">
+								 <i class="fas fa-check"></i>
+							  </span>
+							  <span class="text">Save</span>
+						   </button>
+					   </form>
+				   </div>
+			       	</div>
+			       	<!-- Update Location -->
+				       <div class="col-3">
+						 <form action="/location/updateLocation" method="POST">
+
+							<input type="hidden" name="buildingCoordinatesId" id="buildingCoordinatesId" value="">
+
+							<label class="margin-top" for="buildingId">Building identification</label>
+							<select class="form-control margin-top-select" name="buildingId" id="buildingId" required >
+							      <option disabled selected value="" >Select Building</option>
+								  <option th:each="building : ${buildings}" th:value="${building.buildingId}"
+								  th:text="${building.buildingId}"></option>
+							 </select>
+							 
+							 <label class="margin-top" for="coordinatesLatitude">Coordinates</label>
+							 <select class="form-control margin-top-select" name="coordinatesId" id="coordinatesId" required >
+							       <option disabled selected value="" >Select Coordinates</option>
+								   <option th:each="coordinate : ${coordinates}" th:value="${coordinate.coordinatesId}"
+								   th:text="|${coordinate.coordinatesLatitude} -- ${coordinate.coordinatesLongitute}|"></option>
+							  </select>
+
+							   <label class="margin-top" for="dictionaryTranslatedValue">Building Position</label>
+							   <input class="form-control" type="text" name="buildingPosition" id="buildingPosition" 
+							   required placeholder="Building Position" value="" />
+
+							 <button class="update btn btn-success btn-icon-split margin-top" style="width:100px;margin-bottom: 12px;margin-top: 12px;" type="submit">
+                             <span class="icon text-white-50">
+				              <i class="fas fa-check"></i>
+				           </span>
+								 <span class="text">Update</span>
+							 </button>
+				    </form>
+
+				    <!-- Delete Location -->
+				    	<form action="/location/deleteLocation" method="GET">
+				           <input type="hidden" name="buildingCoordinatesId2" id="buildingCoordinatesId2" value="">
+
+							<button class="delete btn btn-danger btn-icon-split margin-top" style="width:100px" type="submit">
+                          <span class="icon text-white-50">
+				              <i class="fas fa-times"></i>
+				           </span>
+								<span class="text">Delete</span>
+							</button>
+				    </form>
+				</div>
+			</div>
+			<div th:insert="popup" ></div>
+		</body>
+	</html>

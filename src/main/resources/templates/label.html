@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="UGAL Map web application designed for 'Dunarea de Jos' of Galati"/>
+    <meta name="author" content="Crystal-System" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <title>UGAL Map</title>
+  </head>
+	<body>
+		<div th:insert="header"></div>
+ 		<div th:insert="sidebarEditor"></div>
+          <!-- see all Labels -->
+			<div th:fragment="Label">
+			  <!-- Page Heading -->
+			  <!-- DataTales Example -->
+			  <div class="card shadow mb-4" style="margin-left: 18%">
+			    <div class="card-header py-3 card-header-bg">
+			      <h6 class="m-0 font-weight-bold table-title">
+			        Label
+			      </h6>
+			    </div>
+			    <p style="color: red" th:if="${message}" th:text="${message}"></p>
+			    <div class="card-body">
+			      <div class="row">
+					  <!-- List of labels -->
+			        <div class="col-6">
+					    <table id="labelTable" class="table">
+							<thead>
+							  <tr>
+								  <th style="display: none">Label Id </th>
+								  <th> Label Name</th>
+								  <th>Edit</th>
+							  </tr>
+							</thead>
+							<tbody>
+							   <tr th:each="label : ${labels}">
+									<td th:text="${label.labelId}" style="display: none"></td>
+									<td th:text="${label.labelName}"></td>
+									<td><button  class="edit btn btn-warning btn-icon-split margin-top">Edit</button></td>
+								</tr>
+							</tbody>
+						  </table>
+					  
+					  <br>
+                      <button class="btn btn-primary btn-icon-split margin-top" onclick="showHideNewLanguageForm()">
+                            <span class="icon text-white-50">
+                              <i class="fas fa-plus"></i>
+                            </span>
+                            <span class="text">Insert Label</span>
+                      </button>
+
+					  <script>
+						  //Get label name
+						  $(document).on("click",".edit", function(){
+							  var row = $(this);
+
+							  var id = row.closest("tr").find("td:eq(0)").text();
+							  $('#labelId1').val(id);
+							  $('#labelId2').val(id);
+							  var labelName = row.closest("tr").find("td:eq(1)").text();
+							  $('#labelName1').val(labelName);
+						  });
+						  
+						  $(document).on("click", ".update",function () {
+	                            var deleteLabel = document.getElementById("labelId1").value;
+	                            if (deleteLabel == "") {
+	                            	  $("#myModalUpdate").modal();
+	                                  return false;
+	                            }
+	                        });
+						  
+						  $(document).on("click", ".delete",function () {
+	                            var deleteLabel = document.getElementById("labelId2").value;
+	                            if (deleteLabel == "") {
+	                            	  $("#myModalDelete").modal();
+	                                  return false;
+	                            }
+	                        });
+						  
+						  //Animation newForm
+                          function showHideNewLanguageForm() {
+                            let x = document.getElementById("addNewForm");
+                            if (x.style.display === "none") {
+                                x.style.display = "block";
+                            } else {
+                                x.style.display = "none";
+                            }
+                        }
+					  </script>
+					  <br>
+					  <!-- Add Label -->
+					  <div id="addNewForm" class="col-6" style="display:none">
+							<form action="/label/saveLabel" method="POST">
+							<br>
+							  <input type="hidden" name="labelId" id="labelId" value="">
+							  <label class="margin-top" for="labelName">Label Name</label>
+							  <input required class="form-control" type="text" name="labelName" id="labelName" placeholder="Nume" value="" />
+							  <br>
+							  <button type="submit" class="btn btn-primary btn-icon-split margin-top">
+								<span class="icon text-white-50">
+								  <i class="fas fa-check"></i>
+								</span>
+								<span class="text">Save</span>
+							  </button>
+							</form>
+					  </div>
+				   </div>
+				   <!-- Update Labels-->
+			        <div class="col-6">
+			          <form action="/label/updateLabel" method="POST">
+			            <input type="hidden" name="labelId1" id="labelId1" value="">
+			            <label class="margin-top" for="labelName">Label Name</label>
+						<input required class="form-control" type="text" name="labelName1" id="labelName1" placeholder="Nume" value="" />
+
+						  <button class="update btn btn-success btn-icon-split margin-top" style="width:100px;margin-bottom: 12px;margin-top: 12px;" type="submit">
+                             <span class="icon text-white-50">
+				              <i class="fas fa-check"></i>
+				           </span>
+							  <span class="text">Update</span>
+						  </button>
+					  </form>
+					  <!-- Delete Labels -->
+					  <form action="/label/deleteLabel" method="GET">
+						<input type="hidden" name="labelId2" id="labelId2" value="">
+						  <button class="delete btn btn-danger btn-icon-split margin-top" style="width:100px" type="submit">
+                          <span class="icon text-white-50">
+				              <i class="fas fa-times"></i>
+				           </span>
+							  <span class="text">Delete</span>
+						  </button>
+					</form>
+			        </div>
+			      </div>
+			      <div th:insert="popup" ></div>
+		</body>
+		</html>

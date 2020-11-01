@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="UGAL Map web application designed for 'Dunarea de Jos' of Galati"/>
+    <meta name="author" content="Crystal-System" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <title>UGAL Map</title>
+  </head>
+  <body>
+
+<div th:insert="header"></div>
+ <div th:insert="sidebarEditor"></div>
+
+
+  <div class="card shadow mb-4" style="margin-left: 16%;width: 80%">
+    <div class="card-header py-3 card-header-bg">
+      <h6 class="m-0 font-weight-bold table-title" style="text-align: center">
+        Building Entity
+      </h6>
+    </div> <h3 style="color: red" th:if="${message}" th:text="${message}"></h3>
+      <div class="card-body">
+          <div class="row">
+              <div class="col-6">
+
+                  <table class="table table-striped table-responsive-md">
+                      <thead>
+                      <tr>
+                          <th style="display: none">ID</th>
+                          <th>Building number</th>
+                          <th style="display: none">FK_ENTITY_ID</th>
+                          <th>Entity Type</th>
+                          <th>Edit</th>
+
+                      </tr>
+                      </thead>
+                      <!-- VALUES LIST -->
+                      <tbody>
+                      <tr th:each="buildEntity : ${entitys}">
+                          <td style="display: none" th:text="${buildEntity.buildingEntityId}"></td>
+                          <td th:text="${buildEntity.building.buildingId}"></td>
+                          <td style="display: none" th:text="${buildEntity.entity.entityId}"></td>
+                          <td th:text="${buildEntity.entity.entityType}"></td>
+                          <td>
+                              <button class="edit btn btn-warning ">Edit</button>
+                          </td>
+
+                      </tr>
+                      </tbody>
+                  </table>
+
+
+                  <button class="btn btn-primary btn-icon-split margin-top" onclick="showHideNewUserForm()">
+            <span class="icon text-white-50">
+              <i class="fas fa-plus"></i>
+            </span>
+                      <span class="text">Insert Value</span>
+                  </button>
+              </div>
+              <div class="col-2">
+                  <!-- Update Value Form -->
+                  <form action="/buildentity/update" method="POST">
+                      <input id="buildEntityId" name="buildEntityId" type="hidden" value="">
+
+                      <label class="margin-top" for="buildId" name="buildId">Building ID</label>
+
+                      <select class="form-control margin-top-select" id="buildId" name="buildId" required>
+                          <option disabled selected value="">Select Building</option>
+                          <option th:each="building : ${buildings}" th:text="${building.buildingId}"
+                                  th:value="${building.buildingId}"></option>
+                      </select>
+
+                      <label class="margin-top">Entity Type</label>
+                      <select class="form-control margin-top-select" id="entityType" name="entityType" required>
+                          <option disabled selected value="">Select Entity Type</option>
+                          <option th:each="entity : ${entity}" th:text="${entity.entityType}"
+                                  th:value="${entity.entityId}"></option>
+                      </select>
+                      <button class="update btn btn-success btn-icon-split margin-top" style="width:100px;margin-bottom: 12px;margin-top: 12px;"
+                              type="submit">
+				           <span class="icon text-white-50">
+				              <i class="fas fa-check"></i>
+				           </span>
+                          <span class="text">Update</span>
+                      </button>
+                      <!-- Delete Value form -->
+                  </form>
+
+                  <button class="delete btn btn-danger btn-icon-split margin-top" style="width: 100px"
+                          type="submit">
+				           <span class="icon text-white-50">
+				              <i class="fas fa-times"></i>
+				           </span>
+                      <span class="text">Delete</span>
+                  </button>
+                  </form>
+              </div>
+          </div>
+
+      </div>
+
+      <!-- Add new Value form -->
+      <div class="row" id="addNewForm" style="display: none;">
+          <div class="col-6">
+
+
+              <form action="/buildentity/add" method="POST">
+                  <label class="margin-top" for="buildId3">Building Id</label>
+                  <select class="form-control margin-top-select" id="buildId3" name="buildId3" required>
+                      <option disabled selected value="">Select Building</option>
+                      <option th:each="building : ${buildings}" th:text="${building.buildingId}"
+                              th:value="${building.buildingId}"></option>
+                  </select>
+
+                  <input id="entityTypeId" name="entityTypeId" type="hidden" value="">
+                  <label class="margin-top" for="entityType3">Entity Type</label>
+                  <select class="form-control margin-top-select" id="entityId4" name="entityId4" required>
+                      <option disabled selected value="">Select Entity Type</option>
+                      <option th:each="entity : ${entity}" th:text="${entity.entityType}"
+                              th:value="${entity.entityId}"></option>
+                  </select>
+                  <button class="btn btn-success btn-icon-split margin-top" type="submit">
+                      <span class="text">Save</span>
+                  </button>
+              </form>
+          </div>
+      </div>
+
+  </div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<script>
+    $(document).on("click", ".edit", function () {
+        var row = $(this);
+        var id = row.closest("tr").find("td:eq(0)").text();
+        $('#buildEntityId2').val(id);
+        var buildEntityId = row.closest("tr").find("td:eq(0)").text();
+        $('#buildEntityId').val(buildEntityId);
+        var buildId = row.closest("tr").find("td:eq(1)").text();
+        $('#buildId').val(buildId);
+        var type = row.closest("tr").find("td:eq(2)").text();
+        $('#entityType').val(type);
+    });
+
+    $(".update").click(function () {
+        var update = document.getElementById("buildEntityId").value;
+        if (update == "") {
+        	$("#myModalUpdate").modal();
+            return false;
+        }
+    });
+    $(".delete").click(function () {
+        var deleteEntity = document.getElementById("buildEntityId2").value;
+        if (deleteEntity == "") {
+        	$("#myModalDelete").modal();
+            return false;
+        }
+    });
+
+    function showHideNewUserForm() {
+        var x = document.getElementById("addNewForm");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+
+</script>
+<!-- End of user info fragment  -->
+ <div th:insert="popup"></div>
+  </body>
+</html></html>

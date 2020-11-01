@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description"
+	content="UGAL Map web application designed for 'Dunarea de Jos' of Galati" />
+<meta name="author" content="Crystal-System" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<title>UGAL Map</title>
+</head>
+<body>
+	<div th:insert="header"></div>
+ 	<div th:insert="sidebarEditor"></div>
+	<!-- see all Labels -->
+	<div th:fragment="coordinates">
+		<!-- Page Heading -->
+		<!-- DataTales Example -->
+		<div class="card shadow mb-4" style="margin-left: 18%">
+			<div class="card-header py-3 card-header-bg">
+				<h5 class="m-0 font-weight-bold table-title">Entity Label</h5>
+			</div>
+			<h3 style="color: red" th:if="${message}" th:text="${message}"></h3>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-8.8">
+
+						<!-- Begin Table Dictionary List -->
+						<div class="row col-md-8.5 table-responsive">
+							<table class="table" id="coordinatesTable">
+								<thead>
+								<tr>
+									<th style="display: none">Id</th>
+									<th>Entity Label Type</th>
+									<th>Building number</th>
+									<th>Value Content</th>
+									<th>Label Name</th>
+									<th>Schedule Time Start</th>
+									<th>Schedule Time End</th>
+									<th>Entity Type</th>
+									<th>Edit</th>
+
+
+								</tr>
+								</thead>
+								<tbody>
+								<tr th:each="entityLabel : ${entitys}">
+									<td  style="display: none" th:text="${entityLabel.entityLabelId}"></td>
+
+
+									<td
+											th:text="${entityLabel.entityLabelType} ? ${entityLabel.entityLabelType} : ''"></td>
+
+									<td
+											th:text="${entityLabel.building} ? ${entityLabel.building.buildingId} : 'Empty'"></td>
+
+									<td
+											th:text="${entityLabel.value} ? ${entityLabel.value.ValueContent} : 'Empty!'"></td>
+
+									<td
+											th:text="${entityLabel.label} ? ${entityLabel.label.labelName} : 'Empty!'"></td>
+
+									<td
+											th:text="${entityLabel.schedule} ? ${entityLabel.schedule.scheduleTimeStart} : 'Empty!'"></td>
+									<td
+											th:text="${entityLabel.schedule} ? ${entityLabel.schedule.scheduleTimeEnd} : 'Empty!'"></td>
+									<td
+											th:text="${entityLabel.entity} ? ${entityLabel.entity.entityType} : 'Empty!'"></td>
+
+
+									<!-- hidden id -->
+									<td style="display:none"
+										th:text="${entityLabel.value} ? ${entityLabel.value.ValueId} : 'Empty!'"></td>
+									<td style="display:none"
+										th:text="${entityLabel.label} ? ${entityLabel.label.labelId} : 'Empty!'"></td>
+									<td style="display:none"
+										th:text="${entityLabel.schedule} ? ${entityLabel.schedule.scheduleId} : 'Empty!'"></td>
+									<td style="display:none"
+										th:text="${entityLabel.entity} ? ${entityLabel.entity.entityId} : 'Empty!'"></td>
+									<td>
+										<button
+												class="edit btn btn-warning btn-icon-split margin-top">Edit
+										</button>
+									</td>
+
+								</tr>
+								</tbody>
+							</table>
+						</div>
+						<!-- End Table Dictionary List -->
+
+						<br>
+						<button class="btn btn-primary btn-icon-split margin-top"
+								onclick="showHideNewDictionaryForm()">
+							<span class="icon text-white-50"> <i class="fas fa-plus"></i>
+							</span> <span class="text">Insert EntityLabel</span>
+						</button>
+						<br>
+						<!-- Save Dictionary -->
+						<div class="col-3" id="addNewForm" style="display: none">
+							<form action="/entitylabel/add" method="POST">
+								<br>
+
+								<label class="margin-top" for="entityLabelType">Entity Label Type</label>
+								<input class="form-control" id="entityLabelType" name="entityLabelType" placeholder="Entity Label Type"
+									   type="text" value=""/>
+
+
+								<label class="margin-top" for="entityLabelValue">Building Id</label>
+								<select class="form-control margin-top-select" id="selectBuildingId" name="selectBuildingId"
+										required>
+									<option disabled selected value="">Select Building</option>
+									<option th:each="build : ${buildings}" th:text="${build.buildingId}"
+											th:value="${build.buildingId}"></option>
+								</select>
+
+								<label class="margin-top" for="entityLabelValue">Value Content</label>
+								<select class="form-control margin-top-select" id="selectValueContent"
+										name="selectValueContent" required>
+									<option disabled selected value="">Select Value</option>
+									<option th:each="value : ${values}" th:text="${value.valueContent}"
+											th:value="${value.valueId}"></option>
+								</select>
+
+								<label class="margin-top" for="entityLabelValue">Label Name</label>
+								<select class="form-control margin-top-select" id="selectLabelName" name="selectLabelName"
+										required>
+									<option disabled selected value="">Select Label</option>
+									<option th:each="label : ${labels}" th:text="${label.labelName}"
+											th:value="${label.labelId}"></option>
+								</select>
+
+								<label class="margin-top" for="entityLabelValue">Schedule</label>
+								<select class="form-control margin-top-select" id="selectScheduleStart"
+										name="selectScheduleStart" required>
+									<option disabled selected value=""></option>
+									<option th:each="schedule : ${schedules}" th:text="|${schedule.scheduleTimeStart}--${schedule.scheduleTimeEnd}|"
+											th:value="${schedule.scheduleId}"></option>
+								</select>
+
+								<label class="margin-top" for="entityLabelValue">Entity Type</label>
+								<select class="form-control margin-top-select" id="selectEntityType"
+										name="selectEntityType">
+									<option disabled selected value="">Select Entity</option>
+
+									<option th:each="entity : ${entity}" th:text="${entity.entityType}"
+											th:value="${entity.entityId}"></option>
+								</select>
+
+								<br>
+								<button class="btn btn-primary btn-icon-split margin-top" type="submit">
+							  <span class="icon text-white-50">
+								 <i class="fas fa-check"></i>
+							  </span>
+									<span class="text">Save</span>
+								</button>
+							</form>
+						</div>
+					</div>
+					<br>
+					<br>
+					<!-- Update Dictionary -->
+					<div class="col-3">
+						<form action="/entitylabel/update" method="POST">
+
+							<input id="entityLabelId" name="entityLabelId" type="hidden" value="">
+							<label class="margin-top" for="selectEntityLabelType2">Entity Label Type</label>
+							<input class="form-control" id="selectEntityLabelType2" name="selectEntityLabelType2"
+								   placeholder="Entity Label Type"
+								   type="text" value=""/>
+
+							<label class="margin-top" for="selectBuildingId2">Building Id</label>
+							<select class="form-control margin-top-select" id="selectBuildingId2" name="selectBuildingId2"
+									required>
+								<option disabled selected value="">Select Building</option>
+								<option th:each="build : ${buildings}" th:text="${build.buildingId}"
+										th:value="${build.buildingId}"></option>
+							</select>
+
+							<label class="margin-top" for="entityLabelValue2">Value Content</label>
+							<select class="form-control margin-top-select" id="selectValueContent2"
+									name="selectValueContent2" required>
+								<option disabled selected value="">Select Value</option>
+								<option th:each="value : ${values}" th:text="${value.valueContent}"
+										th:value="${value.valueId}"></option>
+							</select>
+
+							<label class="margin-top" for="selectLabelName2">Label Name</label>
+							<select class="form-control margin-top-select" id="selectLabelName2" name="selectLabelName2"
+									required>
+								<option disabled selected value="">Select Label</option>
+								<option th:each="label : ${labels}" th:text="${label.labelName}"
+										th:value="${label.labelId}"></option>
+							</select>
+
+							<label class="margin-top" for="selectScheduleStart2">Schedule</label>
+							<select class="form-control margin-top-select" id="selectScheduleStart2"
+									name="selectScheduleStart2" required>
+								<option disabled selected value=""></option>
+								<option th:each="schedule : ${schedules}" th:text="|${schedule.scheduleTimeStart}--${schedule.scheduleTimeEnd}|"
+										th:value="${schedule.scheduleId}"></option>
+							</select>
+
+
+							<label class="margin-top" for="selectEntityType2">Entity Type</label>
+							<select class="form-control margin-top-select" id="selectEntityType2" name="selectEntityType2"
+									required>
+								<option disabled selected value=""></option>
+								<option th:each="entity : ${entity}" th:text="${entity.entityType}"
+										th:value="${entity.entityId}"></option>
+							</select>
+
+							<button class="update btn btn-success btn-icon-split margin-top" style="width:100px;margin-bottom: 12px;margin-top: 12px;"
+									type="submit">
+				           <span class="icon text-white-50">
+				              <i class="fas fa-check"></i>
+				           </span>
+								<span class="text">Update</span>
+							</button>
+						</form>
+
+						<form action="/entitylabel/delete" method="GET">
+							<input id="entityLabelId2" name="entityLabelId2" type="hidden" value="">
+
+							<button class="delete btn btn-danger btn-icon-split margin-top" style="width: 100px"
+									type="submit">
+				           <span class="icon text-white-50">
+				              <i class="fas fa-times"></i>
+				           </span>
+								<span class="text">Delete</span>
+							</button>
+						</form>
+					</div>
+				</div>
+
+				<script>
+					//Get EntityLabels
+					$(document).on(
+							"click",
+							".edit",
+							function () {
+								var row = $(this);
+
+								var id = row.closest("tr").find(
+										"td:eq(0)").text();
+								$('#entityLabelId').val(id);
+								$('#entityLabelId2').val(id);
+								var EntityLabelType = row.closest("tr").find("td:eq(1)").text();
+								$('#selectEntityLabelType2').val(EntityLabelType);
+								var buildingId = row.closest("tr").find("td:eq(2)").text();
+								$('#selectBuildingId2').val(buildingId);
+								var valueContent = row.closest("tr").find("td:eq(8)").text();
+								$('#selectValueContent2').val(valueContent);
+								var labelName = row.closest("tr").find("td:eq(9)").text();
+								$('#selectLabelName2').val(labelName);
+								var scheduleStart = row.closest("tr").find("td:eq(10)").text();
+								$('#selectScheduleStart2').val(scheduleStart);
+								var scheduleEnd = row.closest("tr").find("td:eq(10)").text();
+								$('#selectScheduleEnd2').val(scheduleEnd);
+								var entityType = row.closest("tr").find("td:eq(11)").text();
+								$('#selectEntityType2').val(entityType);
+							});
+
+					$(".update").click(function () {
+						var update = document.getElementById("entityLabelId").value;
+						if (update == "") {
+							$("#myModalUpdate").modal();
+							return false;
+						}
+					});
+
+
+					$(".delete").click(function () {
+						var deleteEntity = document.getElementById("entityLabelId2").value;
+						if (deleteEntity == "") {
+							$("#myModalDelete").modal();
+							return false;
+						}
+					});
+
+					//Animation newForm
+					function showHideNewDictionaryForm() {
+						let x = document.getElementById("addNewForm");
+						if (x.style.display === "none") {
+							x.style.display = "block";
+						} else {
+							x.style.display = "none";
+						}
+					}
+				</script>
+				</div>
+				<div th:insert="popup"></div>
+</body>
+</html>

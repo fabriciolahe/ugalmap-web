@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="UGAL Map web application designed for 'Dunarea de Jos' of Galati"/>
+    <meta name="author" content="Crystal-System" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <title>UGAL Map</title>
+  </head>
+	<body>
+		<div th:insert="header"></div>
+ 		<div th:insert="sidebarEditor"></div>
+          <!-- see all Labels -->
+			<div th:fragment="Building">
+			  <!-- Page Heading -->
+			  <!-- DataTales Example -->
+			  <div class="card shadow mb-4" style="margin-left: 18%">
+			    <div class="card-header py-3 card-header-bg">
+			      <h6 class="m-0 font-weight-bold table-title">
+			        Building
+			      </h6>
+			    </div>
+			    <p style="color: red" th:if="${message}" th:text="${message}"></p>
+			    <div class="card-body">
+			      <div class="row">
+					  <!-- List of labels -->
+			        <div class="col-6">
+					    <table id="BuildingTable" class="table">
+							<thead>
+							  <tr>
+								  <th>Building Id </th>
+							  </tr>
+							</thead>
+							<tbody>
+							   <tr th:each="building : ${buildings}">
+									<td th:text="${building.BuildingId}"></td>
+									<td><button  class="edit btn btn-warning btn-icon-split margin-top">Select</button></td>
+								</tr>
+							</tbody>
+						  </table>
+
+					  <script>
+						  //Get label name
+						  $(document).on("click",".edit", function(){
+							  var row = $(this);
+
+							  var id = row.closest("tr").find("td:eq(0)").text();
+							  $('#buildingId1').val(id);
+							  $('#buildingId2').val(id);
+							  $('#buildingId3').val(id);
+						  });
+						  
+						  $(document).on("click", ".update",function () {
+	                            var updateBuilding = document.getElementById("buildingId1").value;
+	                            if (updateBuilding == "") {
+	                            	  $("#myModalUpdate").modal();
+	                                  return false;
+	                            }
+	                        });
+						  
+						  $(document).on("click", ".delete",function () {
+	                            var deleteBuilding = document.getElementById("buildingId2").value;
+	                            if (deleteBuilding == "") {
+	                            	  $("#myModalDelete").modal();
+	                                  return false;
+	                            }
+	                        });
+					  </script>
+					  <!-- Add Building -->
+					  <div id="addNewForm" class="col-6">
+							<form action="/building/saveBuilding" method="POST">
+							  <input type="hidden" name="buildingId" id="buildingId" value="">
+							  <br>
+							  <button style="width:150px" type="submit" class="btn btn-primary btn-icon-split margin-top">
+								<span class="icon text-white-50">
+								  <i class="fas fa-plus"></i>
+								</span>
+								<span class="text">Add Building</span>
+							  </button>
+							</form>
+							<!-- Delete Building -->
+							<form action="/building/deleteBuilding" method="GET">
+							  <input type="hidden" name="buildingId2" id="buildingId2" value="">	
+							  <button type="submit" class="delete btn btn-danger btn-icon-split margin-top">
+							  <span class="icon text-white-50">
+							  <i class="fas fa-times"></i>
+							  </span>
+							  <span class="text">Delete Building</span>
+							  </button>
+							  <input type="text" id="buildingId3" disabled style="position:absolute; right:-20%; margin-top:1.5%" >	
+							</form>
+					  </div>
+				   </div>
+				   <!-- Update Building-->
+			        <div class="col-6">
+			          <form style="display:none" action="/building/updateBuilding" method="POST">
+			            <input type="hidden" name="buildingId1" id="buildingId1" value="">
+			            <label class="margin-top" for="buildingId">Building Id</label>
+						<input required class="form-control" type="text" name="buildingId1" id=buildingId3 placeholder="Building Id" value="" />
+						<br>
+			            <button type="submit" class="update btn btn-success btn-icon-split margin-top">
+			              <span class="icon text-white-50">
+			                <i class="fas fa-check"></i>
+			              </span>
+			              <span class="text">Update</span>
+			            </button>
+					  </form>
+			        </div>
+			      </div>
+			      <div th:insert="popup" ></div>
+		</body>
+		</html>

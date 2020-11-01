@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="UGAL Map web application designed for 'Dunarea de Jos' of Galati"/>
+    <meta name="author" content="Crystal-System" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <title>UGAL Map</title>
+  </head>
+	<body>
+	 <div th:insert="header"></div>
+ 	<div th:insert="sidebarEditor"></div>
+	
+          <!-- see all Coordinates -->
+			<div th:fragment="coordinates">
+			  <!-- Page Heading -->
+			  <!-- DataTales Example -->
+			  <div class="card shadow mb-4" style="margin-left: 18%">
+			    <div class="card-header py-3 card-header-bg">
+			     <h5 class="m-0 font-weight-bold table-title">
+			       Coordinates
+			     </h5>
+			   </div>
+				  <h3 style="color: red" th:if="${message}" th:text="${message}"></h3>
+				  <div class="card-body">
+					  <div class="row">
+						  <div class="col-7">
+							  <!-- Begin Table Coordinate List -->
+							  <div class="row col-md-6.5 table-responsive">
+								  <table class="table" id="coordinatesTable">
+									  <thead>
+									  <tr>
+										  <th style="display: none"> Coordinate Id</th>
+										  <th> Coordinate Latitude</th>
+										  <th> Coordinate Longtitute</th>
+										  <th>Edit</th>
+									  </tr>
+									  </thead>
+									  <tbody>
+									  <tr th:each="coordinates : ${coordinates}">
+										  <td style="display: none" th:text="${coordinates.coordinatesId}"></td>
+										  <td th:text="${coordinates.coordinatesLatitude}"></td>
+										  <td th:text="${coordinates.coordinatesLongitute}"></td>
+										  <td>
+											  <button class="edit btn btn-warning btn-icon-split margin-top">Edit</button>
+										  </td>
+									  </tr>
+									  </tbody>
+								  </table>
+							  </div>
+							  <!-- End Table Coordinate List -->
+							  <button class="btn btn-primary btn-icon-split margin-top" onclick="showHideNewLanguageForm()">
+                            <span class="icon text-white-50">
+                              <i class="fas fa-plus"></i>
+                            </span>
+								  <span class="text">Insert Coordinates</span>
+							  </button>
+							  <!-- Save Coordinates-->
+							  <div class="col-3" id="addNewForm" style="display:none">
+								  <form action="/coordinate/saveCoordinates" method="POST">
+									  <br>
+									  <label class="margin-top" for="coordinatesLatitude">Coordinates Latitude</label>
+									  <input onkeydown="javascript: return event.keyCode == 69 ? false : true" class="form-control" id="latitude" name="latitude" placeholder="Latitude" required
+											 type="number" step="any" value=""/>
+
+									  <label class="margin-top" for="coordinatesLongitute">Coordinates Longitute</label>
+									  <input onkeydown="javascript: return event.keyCode == 69 ? false : true" class="form-control" id="longitute" name="longitute" placeholder="Longitute" required
+											 type="number" step="any" value=""/>
+									  <br>
+									  <button class="btn btn-primary btn-icon-split margin-top" type="submit">
+							  <span class="icon text-white-50">
+								 <i class="fas fa-check"></i>
+							  </span>
+										  <span class="text">Save</span>
+									  </button>
+								  </form>
+							  </div>
+						  </div>
+						  <!-- Update Coordinates -->
+						  <div class="col-3">
+							  <form action="/coordinate/updateCoordinates" method="POST">
+								  <input id="coordinatesId" name="coordinatesId" type="hidden" value="">
+								  <label class="margin-top" for="coordinatesLatitude">Coordinates Latitude</label>
+								  <input  onkeydown="javascript: return event.keyCode == 69 ? false : true" class="form-control" id="coordinatesLatitude" name="coordinatesLatitude" placeholder="Latitude"
+										  required type="number" step="any" value=""/>
+
+								  <label class="margin-top" for="coordinatesLongitute">Coordinates Longitute</label>
+								  <input  onkeydown="javascript: return event.keyCode == 69 ? false : true" class="form-control" id="coordinatesLongitute" name="coordinatesLongitute" placeholder="Longitute"
+										  required type="number" step="any" value=""/>
+
+								  <button class="update btn btn-success btn-icon-split margin-top" style="width:100px;margin-bottom: 12px;margin-top: 12px;" type="submit">
+                             <span class="icon text-white-50">
+				              <i class="fas fa-check"></i>
+				           </span>
+									  <span class="text">Update</span>
+								  </button>
+							  </form>
+							  <!-- Delete Coordinates -->
+							  <form action="/coordinate/deleteCoordinates" method="GET">
+								  <input id="coordinatesId2" name="coordinatesId2" type="hidden" value="">
+
+								  <button class="delete btn btn-danger btn-icon-split margin-top" style="width:100px" type="submit">
+                          <span class="icon text-white-50">
+				              <i class="fas fa-times"></i>
+				           </span>
+									  <span class="text">Delete</span>
+								  </button>
+							  </form>
+						  </div>
+					  </div>
+					  <script>
+						  //Get coordinates
+						  $(document).on("click", ".edit", function () {
+							  var row = $(this);
+
+							  var id = row.closest("tr").find("td:eq(0)").text();
+							  $('#coordinatesId').val(id);
+							  $('#coordinatesId2').val(id);
+							  var latitude = row.closest("tr").find("td:eq(1)").text();
+							  $('#coordinatesLatitude').val(latitude);
+							  var longitute = row.closest("tr").find("td:eq(2)").text();
+							  $('#coordinatesLongitute').val(longitute);
+						  });
+						  $(".update").click(function () {
+							  var update = document.getElementById("coordinatesId").value;
+							  if (update == "") {
+								  $("#myModalUpdate").modal();
+								  return false;
+							  }
+						  });
+						  $(".delete").click(function () {
+							  var deleteEntity = document.getElementById("coordinatesId2").value;
+							  if (deleteEntity == "") {
+								  $("#myModalDelete").modal();
+								  return false;
+							  }
+						  });
+						  //Animation newForm
+						  function showHideNewLanguageForm() {
+							  let x = document.getElementById("addNewForm");
+							  if (x.style.display === "none") {
+								  x.style.display = "block";
+							  } else {
+								  x.style.display = "none";
+							  }
+						  }
+					  </script>
+					   <div th:insert="popup"></div>
+	</body>
+</html>

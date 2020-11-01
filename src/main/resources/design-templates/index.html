@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>UGAL Map</title>
+
+    <!-- Favicon -->
+    <link href="assets/ico/favicon.ico" rel="shortcut icon"/>
+
+    <!-- jQuery -->
+    <script
+            crossorigin="anonymous"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+    ></script>
+
+    <!-- CSS -->
+    <link
+            href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,500,500i"
+            rel="stylesheet"
+    />
+    <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="assets/font-awesome/css/all.min.css" rel="stylesheet"/>
+    <link href="assets/css/animate.css" rel="stylesheet"/>
+    <link href="assets/css/style.css" rel="stylesheet"/>
+
+    <!-- Leaflet -->
+    <link href="assets/leaflet/leaflet.css" rel="stylesheet"/>
+    <script src="assets/leaflet/leaflet.js"></script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<!-- Top menu -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header wow fadeIn">
+            <button
+                    class="navbar-toggle collapsed"
+                    data-target="#top-navbar-1"
+                    data-toggle="collapse"
+                    type="button"
+            >
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="navbar-brand" href="index.html">
+                <span class="text-blue">UGAL</span> Map</a
+            >
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="top-navbar-1">
+            <ul
+                    class="nav navbar-nav navbar-right navbar-search-button wow fadeIn"
+            >
+                <li>
+                    <a class="search-button" href="#"><i class="fa fa-search"></i></a>
+                </li>
+                <li class="nav-item dropdown submenu">
+                    <a
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            data-toggle="dropdown"
+                            href="#"
+                            id="navbarDropdown"
+                            role="button"
+                    >By institution type <i class="fa fa-caret-down"></i
+                    ></a>
+                    <ul class="dropdown-menu institution-menu wow fadeInDown">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-university"></i> University
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-chalkboard-teacher"></i> Faculty
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-bed"></i> Student dorm
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-book"></i> Library
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-pizza-slice"></i> Canteen
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-baseball-ball"></i> Gym
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="">
+                    <a
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            data-toggle="dropdown"
+                            href="#"
+                            role="button"
+                    >EN <i class="fa fa-caret-down"></i
+                    ></a>
+                    <ul class="dropdown-menu lang-menu wow fadeInDown">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">EN</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">RO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">FR</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <form
+                    action=""
+                    autocomplete="off"
+                    class="navbar-form navbar-search-form disabled wow fadeInLeft"
+                    id="searchForm"
+                    method="post"
+                    role="form"
+            >
+                <div class="form-group autocomplete">
+                    <input
+                            class="search form-control"
+                            id="searchInput"
+                            name="search"
+                            placeholder="Search..."
+                            type="text"
+                    />
+                </div>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- Top content -->
+<div class="top-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 text text-blue"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Features -->
+<div class="features-container section-container" id="map-container">
+    <div class="section-map wow fadeInLeft" id="mapid"></div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 footer-copyright">
+                &copy; Crystal-System
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    var entities = [];
+    var institutions = [];
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "http://localhost:8083/ugalmap/api/entityLabel/mapEntities",
+        complete: function (data) {
+            var resp = JSON.parse(data.responseText);
+            entities = resp.mapEntities;
+            entities.forEach(element => {
+                if (element.label.labelName == "name") {
+                institutions.push(element.value.valueContent);
+            }
+        });
+            load(institutions);
+        }
+    });
+
+    var buildingEntities = [];
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "http://localhost:8083/ugalmap/api/buildingEntity/all",
+        complete: function (data) {
+            buildingEntities = JSON.parse(data.responseText).buildingEntityList;
+
+            buildingEntities.forEach(e => {
+                // console.log("buildingEntities : ", e);
+            });
+        }
+    });
+
+    // //console.log("i", institutions);
+    // var institution = [
+    //   "Universitatea 'Dunărea de Jos' din Galați",
+    //   "Facultatea de Inginerie",
+    //   "Facultatea de Arhitectură Navală",
+    //   "Facultatea de Știință și Ingineria Alimentelor",
+    //   "Facultatea de Automatică, Calculatoare, Ingineria Electrică și Electronică",
+    //   "Facultatea de Educație Fizică și Sport",
+    //   "Facultatea de Litere",
+    //   "Facultatea de Științe și Mediu",
+    //   "Facultatea de Istorie, Filosofie și Teologie",
+    //   "Facultatea de Economie și Administrarea Afacerilor",
+    //   "Facultatea de Juridice, Sociale și Politice",
+    //   "Facultatea de Medicină și Farmacie",
+    //   "Facultatea de Arte",
+    //   "Cămin B",
+    //   "Cămin C",
+    //   "Cămin D",
+    //   "Cămin E",
+    //   "Cămin H",
+    //   "Cămin G",
+    //   "Cantina Studențească Nr.2",
+    //   "Cafeteria Notre Dame",
+    //   "Minicantina ASE",
+    //   "Minicantina Universității",
+    //   "Biblioteca Universității 'Dunărea de Jos' din Galați",
+    //   "Biblioteca 'Științe economice și umaniste'",
+    //   "Biblioteca 'Facultății de Medicină și Farmacie'"
+    // ];
+
+    function load(institutions) {
+        function autocomplete(inp, arr) {
+            /*the autocomplete function takes two arguments,
+        the text field element and an array of possible autocompleted values:*/
+            var currentFocus;
+            /*execute a function when someone writes in the text field:*/
+            inp.addEventListener("input", function (e) {
+                var a,
+                    b,
+                    i,
+                    val = this.value;
+                /*close any already open lists of autocompleted values*/
+                closeAllLists();
+                if (!val) {
+                    return false;
+                }
+                currentFocus = -1;
+                /*create a DIV element that will contain the items (values):*/
+                a = document.createElement("DIV");
+                a.style.textAlign = "left";
+                a.setAttribute("id", this.id + "autocomplete-list");
+                a.setAttribute("class", "autocomplete-items");
+                /*append the DIV element as a child of the autocomplete container:*/
+                this.parentNode.appendChild(a);
+                /*for each item in the array...*/
+                for (i = 0; i < arr.length; i++) {
+                    /*check if the item starts with the same letters as the text field value:*/
+                    if (
+                        arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()
+                    ) {
+                        /*create a DIV element for each matching element:*/
+                        b = document.createElement("DIV");
+                        b.style.paddingLeft = "10px";
+
+                        b.classList.add("autocomplete-hover");
+
+                        b.style.color = "#fff";
+                        /*make the matching letters bold:*/
+                        b.innerHTML =
+                            "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                        b.innerHTML += arr[i].substr(val.length);
+                        /*insert a input field that will hold the current array item's value:*/
+                        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                        /*execute a function when someone clicks on the item value (DIV element):*/
+                        b.addEventListener("click", function (e) {
+                            /*insert the value for the autocomplete text field:*/
+                            inp.value = this.getElementsByTagName("input")[0].value;
+                            /*close the list of autocompleted values,
+                            (or any other open lists of autocompleted values:*/
+                            console.log(inp.value);
+
+                            $.ajax({
+                                type: "GET",
+                                dataType: "json",
+                                url:
+                                    "http://localhost:8083/ugalmap/api/entityLabel/buildingByEntity?entityName=" +
+                                    inp.value,
+                                complete: function (data) {
+                                    let resp = JSON.parse(data.responseText);
+                                    console.log("resp", resp);
+
+                                    if (resp.entity == null) {
+                                        loadBuildingLocation(resp.building.buildingId, true);
+                                    } else {
+                                        loadBuildingLocation(resp.entity.entityId, false);
+                                    }
+                                }
+                            });
+
+                            closeAllLists();
+
+                            /*submits selected value - will be changed in futute,
+                              most probably will use an ajax implementation*/
+                            //document.getElementById("searchForm").submit();
+                        });
+                        a.appendChild(b);
+                    }
+                }
+            });
+            /*execute a function presses a key on the keyboard:*/
+            inp.addEventListener("keydown", function (e) {
+                var x = document.getElementById(this.id + "autocomplete-list");
+                if (x) x = x.getElementsByTagName("div");
+                if (e.keyCode == 40) {
+                    /*If the arrow DOWN key is pressed,
+                  increase the currentFocus variable:*/
+                    currentFocus++;
+                    /*and and make the current item more visible:*/
+                    addActive(x);
+                } else if (e.keyCode == 38) {
+                    //up
+                    /*If the arrow UP key is pressed,
+                  decrease the currentFocus variable:*/
+                    currentFocus--;
+                    /*and and make the current item more visible:*/
+                    addActive(x);
+                }
+            });
+
+            function addActive(x) {
+                /*a function to classify an item as "active":*/
+                if (!x) return true;
+                /*start by removing the "active" class on all items:*/
+                removeActive(x);
+                if (currentFocus >= x.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = x.length - 1;
+                /*add class "autocomplete-active":*/
+                x[currentFocus].classList.add("autocomplete-active");
+                /*sets the input value of the sugestion*/
+                inp.value = x[currentFocus].textContent;
+            }
+
+            function removeActive(x) {
+                /*a function to remove the "active" class from all autocomplete items:*/
+                for (var i = 0; i < x.length; i++) {
+                    x[i].classList.remove("autocomplete-active");
+                }
+            }
+
+            function closeAllLists(elmnt) {
+                /*close all autocomplete lists in the document,
+            except the one passed as an argument:*/
+                var x = document.getElementsByClassName("autocomplete-items");
+                for (var i = 0; i < x.length; i++) {
+                    if (elmnt != x[i] && elmnt != inp) {
+                        x[i].parentNode.removeChild(x[i]);
+                    }
+                }
+            }
+
+            /*execute a function when someone clicks in the document:*/
+            document.addEventListener("click", function (e) {
+                closeAllLists(e.target);
+            });
+        }
+
+        autocomplete(document.getElementById("searchInput"), institutions);
+    }
+
+    // $.ajax({
+    //   type: "GET",
+    //   dataType: "json",
+    //   url: "http://192.168.40.86:8083/ugalmap/api/location/2",
+    //   complete: function(data) {
+    //     //console.log(data.responseText);
+    //     var loc = new Array();
+    //     loc.push(JSON.parse(data.responseText));
+    //     loadBuilding(loc);
+    //   }
+    // });
+
+    function loadBuildingLocation(id, isBuilding) {
+        console.log(">>>>>>>>>>> ", id, isBuilding, "<<<<<<<<<<<<<<");
+        var locationList = [];
+        if (isBuilding) {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "http://localhost:8083/ugalmap/api/location/" + id,
+                complete: function (data) {
+                    console.log(data.responseText);
+                    locationList.push(JSON.parse(data.responseText));
+                    loadBuilding(locationList);
+                }
+            });
+        } else {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url:
+                    "http://localhost:8083/ugalmap/api/buildingEntity/building/" +
+                    id,
+                complete: function (data) {
+                    console.log(data.responseText);
+                    var buildings = JSON.parse(data.responseText);
+                    console.log(buildings.buildingLocations.length);
+                    buildings.buildingLocations.forEach(e => {
+                        locationList.push(e);
+                });
+                    loadBuilding(locationList);
+                }
+            });
+        }
+    }
+</script>
+
+<script>
+    var osmap = L.map("mapid").setView([45.438603, 28.0561195], 15);
+
+    var markers = new L.FeatureGroup();
+
+    L.tileLayer(
+        "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw",
+        {
+            maxZoom: 18,
+            id: "mapbox.streets"
+        }
+    ).addTo(osmap);
+
+    var mark = L.marker([45.4386048, 28.0558867]);
+
+    // markers.addLayer(mark);
+    markers.clearLayers();
+
+
+    L.polygon([
+        [45.438996, 28.055578],
+        [45.438932, 28.056418],
+        [45.438302, 28.056305],
+        [45.438385, 28.055456]
+    ]).addTo(osmap);
+
+    var marker = L.marker([45.4386048, 28.0558867]);
+    markers.addLayer(marker);
+
+
+    L.marker([45.4386048, 28.0558867])
+        .addTo(osmap)
+        .bindPopup("Universitatea Dunarea de Jos")
+        .openPopup();
+
+    osmap.on('click', function (e) {
+        osmap.removeLayer(markers);
+        markers.clearLayers();
+        markers.addLayer(L.marker(e.latlng));
+
+        console.log("You clicked the map at " + e.latlng);
+        osmap.addLayer(markers);
+
+        // Ajax query to save the values:
+        var request = new XMLHttpRequest();
+        request.open('POST', 'http://localhost:8083/ugalmap/api/coordinates/addFromMap');
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        request.send(JSON.stringify({
+            lat: e.latlng.lat,
+            lng: e.latlng.lng
+        }));
+
+    });
+
+</script>
+
+<script>
+    function loadBuilding(locationList) {
+
+        console.log("\n\nDRAWING : " + locationList.length);
+
+        locationList.forEach(building => {
+            console.log("BUILDING ", building);
+
+        let coordinates = building.buildingCoordinates;
+        let coord = [];
+        coordinates.forEach(element => {
+            coord.push([
+                element.coordinates.coordinatesLatitude,
+                element.coordinates.coordinatesLongitute
+            ]);
+    });
+
+        var ab = document.getElementById("searchInput").value;
+
+        osmap.removeLayer(markers)
+        markers.clearLayers();
+
+        markers.addLayer(L.polyline(coord, {color: "red"}));
+
+        markers.addLayer(L.tileLayer(
+            "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw",
+            {
+                maxZoom: 18,
+                id: "mapbox.streets"
+            }
+        ));
+        osmap.addLayer(markers);
+
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url:
+                "http://localhost:8083/ugalmap/api/entityLabel/buildingByEntity?entityName=" + ab,
+            complete: function (data) {
+                let resp = JSON.parse(data.responseText);
+                console.log("resp", resp);
+                doWork(resp);
+            }
+        });
+
+        var a;
+
+        function doWork(data) {
+
+            a = data;
+            if (a.schedule == null) {
+                markers.addLayer(L.marker([coord[0][0], coord[0][1]])
+                    .bindPopup(a.value.valueContent + "<br> Entity Type: " + a.entity.entityType)
+                    //.getPopup().setContent()
+                    .openPopup());
+            } else {
+                /  Popupi /;
+                markers.addLayer(L.marker([coord[0][0], coord[0][1]])
+                    .bindPopup(a.value.valueContent + "<br>  Entity Type: " + a.entity.entityType +
+                        "<br> Time Start: " + a.schedule.scheduleTimeStart + "<br> Time End: " + a.schedule.scheduleTimeEnd)
+                    //.getPopup().setContent()
+                    .openPopup());
+
+            }
+        }
+    });
+    }
+</script>
+
+<!-- Javascript -->
+<script src="assets/js/jquery-1.11.1.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/jquery.backstretch.min.js"></script>
+<script src="assets/js/wow.min.js"></script>
+<script src="assets/js/scripts.js"></script>
+
+<!--[if lt IE 10]>
+<script src="assets/js/placeholder.js"></script>
+<![endif]-->
+</body>
+</html>

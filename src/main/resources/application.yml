@@ -1,0 +1,37 @@
+#
+#Data base connection
+#
+spring:         
+   #thymeleaf .html files route   
+   thymeleaf:
+      cache: false
+      enabled: true
+      prefix: classpath:/templates/
+      suffix: .html
+      mode: LEGACYHTML5
+      check-template-location: true
+   #allow multipart-form-data
+   servlet: 
+      multipart: 
+         max-file-size: -1
+         enabled: true
+   #show the hibernate interogations  
+
+hostDomain: http://localhost:8083
+
+logging.level.web: DUBUG
+server:
+   servlet:
+      context-path: /
+   port: 8084
+log4j:
+   logger:
+      org:
+         thymeleaf:               
+            TemplateEngine:
+               cache:
+                  TEMPLATE_CACHE: TRACE
+               CONFIG: TRACE
+               TIMER: TRACE
+
+
